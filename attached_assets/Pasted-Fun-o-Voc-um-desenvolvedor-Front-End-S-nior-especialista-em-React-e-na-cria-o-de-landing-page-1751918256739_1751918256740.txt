@@ -1,0 +1,106 @@
+Função: Você é um desenvolvedor Front-End Sênior, especialista em React e na criação de landing pages de alta conversão.
+
+Objetivo do Projeto: Sua tarefa é criar um site de uma única página (single page) para a empresa SlenoCard. O objetivo do site é vender um cartão de avaliação por aproximação, destacando sua facilidade de uso e seus benefícios para os negócios.
+
+1. Visão Geral e Identidade Visual
+Nome da Empresa: SlenoCard
+
+Produto: Um cartão físico com tecnologia NFC (e QR Code) que, ao ser aproximado de um smartphone, direciona o cliente diretamente para a página de avaliação do estabelecimento no Google.
+
+Logo Principal: Utilize a logo presente na imagem image_7d4625.png.
+
+Paleta de Cores: A identidade visual deve ser moderna, tecnológica e confiável. Utilize a seguinte paleta:
+
+Fundo Principal: Preto levemente acinzentado (ex: #1A1A1A).
+
+Cor de Destaque: Laranja vibrante (ex: #FF7A00), para botões, ícones e detalhes importantes.
+
+Texto e Elementos Secundários: Branco (ex: #FFFFFF ou um branco levemente quebrado como #F5F5F5).
+
+Tipografia: Escolha uma fonte sans-serif moderna e legível, como Inter, Montserrat ou Poppins.
+
+2. Estrutura e Seções do Site (Ordem de Exibição)
+Construa o site como uma página única, com as seções dispostas na seguinte ordem para otimizar a jornada de compra do cliente:
+
+a) Menu de Navegação (Header)
+
+Deve ser fixo no topo da página (sticky).
+
+Links âncora para as seções: Como Funciona, Planos e Peça o Seu.
+
+Inclua a logo da SlenoCard à esquerda.
+
+b) Seção Hero (Abertura Impactante)
+
+Título Principal (H1): "Transforme Clientes Satisfeitos em Avaliações 5 Estrelas."
+
+Subtítulo: "Com o SlenoCard, sua empresa no topo do Google. A forma mais fácil e rápida para seus clientes deixarem uma avaliação positiva."
+
+Imagem: Crie um mockup digital, limpo e realista, do cartão físico exibido na imagem image_7d4625.png. Apresente-o com destaque.
+
+Call-to-Action (Botão): Um botão em laranja com o texto "Peça já o seu", que rola a página suavemente para a seção de Planos.
+
+c) Seção "Como Funciona"
+
+Título: "Receber uma avaliação nunca foi tão simples."
+
+Layout: Apresente um processo de 3 passos simples, dispostos horizontalmente, cada um com um ícone e um texto curto.
+
+Aproxime: "Seu cliente aproxima o celular do SlenoCard." (Use o ícone da imagem IMG_5304.JPG aqui, ele simboliza a conexão instantânea).
+
+Avalie: "O link de avaliação da sua empresa abre instantaneamente."
+
+Cresça: "Sua reputação online e suas vendas aumentam."
+
+d) Seção de Busca (Ferramenta Interativa)
+
+Título: "Veja a mágica acontecer com sua empresa."
+
+Funcionalidade: Inclua um campo de input de texto com um botão ao lado.
+
+Placeholder do Input: "Digite o nome da sua empresa"
+
+Texto do Botão: "Buscar"
+
+Observação: Este campo não precisa de uma API funcional por enquanto. É um elemento visual para engajamento.
+
+e) Seção de Planos e Preços
+
+Título: "Escolha o plano ideal para o seu negócio."
+
+Layout: Apresente 3 opções de planos em cards lado a lado.
+
+Plano 1: 1 Cartão (preço unitário)
+
+Plano 2: 3 Cartões (preço com um pequeno desconto)
+
+Plano 3: 10 Cartões (destaque este card com um selo de "Mais Popular" ou "Melhor Custo-Benefício").
+
+Funcionalidade: Abaixo dos planos, adicione uma opção para "Adicionar cartões avulsos" com um controle de quantidade (- e +) que atualiza o valor dinamicamente.
+
+f) Seção de Pedido (Formulário)
+
+Título: "Falta pouco para você impulsionar suas avaliações!"
+
+Formulário: Crie um formulário para o cliente preencher as informações de envio com os seguintes campos:
+
+Nome Completo
+
+E-mail
+
+WhatsApp
+
+Endereço Completo para Envio
+
+Botão de Ação Final: Um botão grande, na cor laranja, com o texto "Finalizar Compra". Este botão deve ter a aparência de um botão de envio, mas não precisa ter nenhuma funcionalidade de clique ou envio de dados por enquanto.
+
+3. Requisitos Técnicos
+Framework: Utilize React.js.
+
+Boas Práticas: O código deve ser limpo e bem organizado. Crie componentes reutilizáveis para cada seção (ex: <Navbar />, <Hero />, <PricingCard />, <OrderForm />).
+
+Responsividade: O site deve ser totalmente responsivo, garantindo uma experiência de usuário perfeita em desktops, tablets e smartphones.
+
+Estilização: Utilize CSS moderno (Flexbox, Grid) para o layout. Pode usar CSS Modules, Styled Components ou Tailwind CSS, seguindo as melhores práticas.
+
+Funcionalidade: Nenhuma integração com backend ou APIs é necessária nesta fase. O foco é na interface do usuário (UI) e na experiência do usuário (UX).
