@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 10.2%);
+  --foreground: hsl(0, 0%, 96.1%);
+  --muted: hsl(0, 0%, 16.5%);
+  --muted-foreground: hsl(0, 0%, 64.9%);
+  --popover: hsl(0, 0%, 10.2%);
+  --popover-foreground: hsl(0, 0%, 96.1%);
+  --card: hsl(0, 0%, 16.5%);
+  --card-foreground: hsl(0, 0%, 96.1%);
+  --border: hsl(0, 0%, 25.9%);
+  --input: hsl(0, 0%, 16.5%);
+  --primary: hsl(24, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(0, 0%, 16.5%);
+  --secondary-foreground: hsl(0, 0%, 96.1%);
+  --accent: hsl(0, 0%, 16.5%);
+  --accent-foreground: hsl(0, 0%, 96.1%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(24, 100%, 50%);
+  --radius: 0.5rem;
+  
+  /* SlenoCard specific colors */
+  --slenocard-dark: hsl(0, 0%, 10.2%);
+  --slenocard-orange: hsl(24, 100%, 50%);
+  --slenocard-gray: hsl(0, 0%, 16.5%);
+  --slenocard-light: hsl(0, 0%, 96.1%);
+}
+
+.dark {
+  --background: hsl(0, 0%, 10.2%);
+  --foreground: hsl(0, 0%, 96.1%);
+  --muted: hsl(0, 0%, 16.5%);
+  --muted-foreground: hsl(0, 0%, 64.9%);
+  --popover: hsl(0, 0%, 10.2%);
+  --popover-foreground: hsl(0, 0%, 96.1%);
+  --card: hsl(0, 0%, 16.5%);
+  --card-foreground: hsl(0, 0%, 96.1%);
+  --border: hsl(0, 0%, 25.9%);
+  --input: hsl(0, 0%, 16.5%);
+  --primary: hsl(24, 100%, 50%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(0, 0%, 16.5%);
+  --secondary-foreground: hsl(0, 0%, 96.1%);
+  --accent: hsl(0, 0%, 16.5%);
+  --accent-foreground: hsl(0, 0%, 96.1%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(24, 100%, 50%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased text-foreground;
+    background-color: var(--slenocard-dark);
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Custom utility classes */
+.bg-slenocard-dark {
+  background-color: var(--slenocard-dark);
+}
+
+.bg-slenocard-orange {
+  background-color: var(--slenocard-orange);
+}
+
+.bg-slenocard-gray {
+  background-color: var(--slenocard-gray);
+}
+
+.text-slenocard-orange {
+  color: var(--slenocard-orange);
+}
+
+.text-slenocard-light {
+  color: var(--slenocard-light);
+}
+
+.border-slenocard-orange {
+  border-color: var(--slenocard-orange);
+}
+
+.border-slenocard-gray {
+  border-color: var(--slenocard-gray);
+}
+
+.hover\:bg-orange-600:hover {
+  background-color: hsl(21, 90%, 48%);
+}
+
+.hover\:text-slenocard-orange:hover {
+  color: var(--slenocard-orange);
+}
+
+.hover\:border-slenocard-orange:hover {
+  border-color: var(--slenocard-orange);
+}
