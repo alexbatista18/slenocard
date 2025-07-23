@@ -1,6 +1,25 @@
+// server/index.ts
+
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+// --- CORREÇÃO PARA O ERRO "__dirname is not defined" ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+
+console.log(`API Key Loaded: ${process.env.GOOGLE_API_KEY ? "Yes" : "No"}`);
+
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
+}
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import os from "os";
 
 const app = express();
 app.use(express.json());
@@ -56,15 +75,46 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  const port = process.env.FRONTEND_PORT
+    ? parseInt(process.env.FRONTEND_PORT)
+    : 80;
+  const host = process.env.SERVER_HOST || "0.0.0.0";
+
+  server.listen(
+    {
+      port,
+      host,
+    },
+    () => {
+      const domain = process.env.DOMAIN;
+      const localAddress = `http://localhost:${port}`;
+      const networkAddress = `http://${getLocalIP()}:${port}`;
+
+      log("🚀 Servidor iniciado com sucesso!");
+      if (domain) {
+        log(`🌐 Domínio customizado: https://${domain}`);
+      }
+      log(`📍 Local: ${localAddress}`);
+      log(`🌍 Rede: ${networkAddress}`);
+    }
+  );
 })();
+
+function getLocalIP(): string {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    const iface = interfaces[name];
+    if (iface) {
+      for (const alias of iface) {
+        if (
+          alias.family === "IPv4" &&
+          alias.address !== "127.0.0.1" &&
+          !alias.internal
+        ) {
+          return alias.address;
+        }
+      }
+    }
+  }
+  return "localhost";
+}

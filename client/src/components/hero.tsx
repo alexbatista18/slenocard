@@ -1,8 +1,8 @@
 export default function Hero() {
   const scrollToPlans = () => {
-    const element = document.getElementById('planos');
+    const element = document.getElementById("planos");
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -13,10 +13,13 @@ export default function Hero() {
           <div className="mb-12 lg:mb-0">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               Transforme Clientes Satisfeitos em{" "}
-              <span className="text-slenocard-orange">Avaliações 5 Estrelas</span>
+              <span className="text-slenocard-orange">
+                Avaliações 5 Estrelas
+              </span>
             </h1>
             <p className="text-xl text-slenocard-light mb-8 leading-relaxed">
-              Com o SlenoCard, sua empresa no topo do Google. A forma mais fácil e rápida para seus clientes deixarem uma avaliação positiva.
+              Com o SlenoCard, sua empresa no topo do Google. A forma mais fácil
+              e rápida para seus clientes deixarem uma avaliação positiva.
             </p>
             <button
               onClick={scrollToPlans}
@@ -27,7 +30,7 @@ export default function Hero() {
           </div>
           <div className="flex justify-center lg:justify-end">
             {/* Product Mockup */}
-            <div className="relative">
+            <div className="flex items-center justify-center min-h-screen pr-24 relative">
               <div className="w-80 h-48 bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl transform rotate-12 hover:rotate-6 transition-transform duration-300">
                 <div className="absolute inset-4 flex flex-col justify-center items-center">
                   {/* Google logo representation */}
@@ -37,11 +40,15 @@ export default function Hero() {
                   {/* 5 stars */}
                   <div className="flex space-x-1 mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <div key={i} className="w-6 h-6 text-yellow-400">★</div>
+                      <div key={i} className="w-6 h-6 text-yellow-400">
+                        ★
+                      </div>
                     ))}
                   </div>
                   {/* SlenoCard branding */}
-                  <div className="text-slenocard-orange font-bold text-lg">SlenoCard</div>
+                  <div className="text-slenocard-orange font-bold text-lg">
+                    SlenoCard
+                  </div>
                 </div>
                 {/* NFC symbol */}
                 <div className="absolute top-4 right-4 w-8 h-8 border-2 border-slenocard-orange rounded-full flex items-center justify-center">
