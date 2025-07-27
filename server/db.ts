@@ -26,7 +26,11 @@ export type TransactionRecord = {
       state: string;
       postcode: string;
     };
-    loja_pesquisada?: string;
+    loja_pesquisada?: {
+      nome: any;
+      endereco: any;
+      geometry: any;
+    };
   };
 };
 

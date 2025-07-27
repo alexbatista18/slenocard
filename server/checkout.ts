@@ -9,8 +9,6 @@ const router = express.Router();
 
 // Token de acesso fornecido pela Appmax (coloque no seu .env para segurança)
 const APPMAX_ACCESS_TOKEN = process.env.APPMAX_ACCESS_TOKEN;
-// DEBUG: Mostra o valor do token ao iniciar o backend
-console.log("[DEBUG] APPMAX_ACCESS_TOKEN carregado:", APPMAX_ACCESS_TOKEN);
 // URL base da API da Appmax (sandbox para testes)
 const APPMAX_API_URL = "https://admin.appmax.com.br/api/v3";
 
@@ -145,10 +143,21 @@ router.post("/appmax/order", async (req, res) => {
       endereco_cep,
       loja_pesquisada,
       produtos,
-      shipping = 10.0,
-      discount = 0,
+      shipping = 0.0,
+      discount = 10,
       freight_type = "PAC",
     } = req.body;
+
+    // Verifica se loja_pesquisada foi informada e é objeto válido
+    if (
+      !loja_pesquisada ||
+      typeof loja_pesquisada !== "object" ||
+      !loja_pesquisada.nome
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Selecione uma loja antes de finalizar o pedido." });
+    }
 
     let customer;
     // Se veio customer_id, busca o cliente na Appmax
@@ -220,9 +229,20 @@ router.post("/appmax/order", async (req, res) => {
       "[DEBUG] Resposta completa do pedido Appmax:",
       JSON.stringify(orderRes.data, null, 2)
     );
+
     const order = orderRes.data.data;
 
     // 4. Salva transação como pendente
+    // Filtra campos essenciais da loja pesquisada
+    const lojaFiltrada =
+      loja_pesquisada && typeof loja_pesquisada === "object"
+        ? {
+            nome: loja_pesquisada.nome,
+            endereco: loja_pesquisada.endereco,
+            geometry: loja_pesquisada.geometry,
+          }
+        : undefined;
+
     const record: TransactionRecord = {
       id: Date.now(),
       customer_id: customer.id,
@@ -243,7 +263,7 @@ router.post("/appmax/order", async (req, res) => {
           state: customer.address_state,
           postcode: customer.postcode,
         },
-        loja_pesquisada,
+        loja_pesquisada: lojaFiltrada,
       },
     };
     saveTransaction(record);
@@ -283,7 +303,6 @@ router.post("/appmax/order", async (req, res) => {
         "[ALERTA] Link de checkout não encontrado na resposta do pedido. Verifique configuração do produto/bundle na Appmax."
       );
     }
-    console.log("[DEBUG] Link de checkout retornado:", checkout_url);
     res.json({
       success: true,
       text: "OK",
@@ -384,10 +403,23 @@ router.post("/appmax/payment/boleto", async (req, res) => {
  */
 router.post("/appmax/webhook", (req, res) => {
   // Trate os dados recebidos do webhook conforme sua lógica de negócio
-  console.log("Webhook recebido:", req.body);
-  const { order_id, order_status, payment_status } = req.body;
-  // Normaliza status para TransactionStatus
+  console.log("Webhook recebido:", JSON.stringify(req.body, null, 2));
+  // Suporta payloads Appmax: plano A (flat), plano B (data: {...})
+  const { order_id, order_status, payment_status, data } = req.body;
+  let realOrderId = order_id;
   let status: "concluido" | "pendente" | "falha" = "pendente";
+  // Se vier data, prioriza dados internos
+  if (data) {
+    if (data.status && typeof data.status === "string") {
+      if (data.status.toLowerCase() === "aprovado") {
+        status = "concluido";
+      } else if (data.status.toLowerCase().includes("falha")) {
+        status = "falha";
+      }
+    }
+    if (data.id) realOrderId = data.id;
+  }
+  // Fallback para order_status/payment_status
   if (order_status && typeof order_status === "string") {
     if (
       order_status.toLowerCase().includes("concluido") ||
@@ -408,17 +440,17 @@ router.post("/appmax/webhook", (req, res) => {
       status = "falha";
     }
   }
-  if (order_id) {
+  if (realOrderId) {
     const {
       updateTransactionStatus,
       getTransactionByOrderId,
     } = require("./db");
-    updateTransactionStatus(order_id, status);
+    updateTransactionStatus(realOrderId, status);
     // Busca transação para mostrar loja_pesquisada
-    const transaction = getTransactionByOrderId(order_id);
+    const transaction = getTransactionByOrderId(realOrderId);
     const loja = transaction?.user?.loja_pesquisada || "(não informado)";
     console.log(
-      `Transação ${order_id} atualizada para status: ${status} | Loja pesquisada: ${loja}`
+      `Transação ${realOrderId} atualizada para status: ${status} | Loja pesquisada: ${loja}`
     );
   }
   res.sendStatus(200);

@@ -25,6 +25,21 @@ import {
 } from "@/components/ui/select";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
+// Declaração global para window.lojaPesquisada
+// Padroniza o tipo global de window.lojaPesquisada igual ao search-section.tsx
+declare global {
+  interface Window {
+    lojaPesquisada?: {
+      nome: string;
+      endereco: string;
+      name: string;
+      formatted_address: string;
+      place_id: string;
+      [key: string]: any;
+    };
+  }
+}
+
 const orderFormSchema = z.object({
   nome: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
@@ -46,7 +61,9 @@ const orderFormSchema = z.object({
       })
     )
     .min(1, "Adicione pelo menos um item ao pedido"),
-  loja_pesquisada: z.string().optional(),
+  loja_pesquisada: z
+    .string()
+    .min(2, "Selecione uma loja antes de finalizar o pedido"),
 });
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
@@ -125,6 +142,33 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
     },
   });
 
+  // Sincroniza valor inicial ao montar
+  useEffect(() => {
+    if (window.lojaPesquisada && window.lojaPesquisada.nome) {
+      form.setValue("loja_pesquisada", window.lojaPesquisada.nome);
+    } else {
+      form.setValue("loja_pesquisada", "");
+    }
+  }, []);
+
+  // Sincroniza valor quando o evento é disparado
+  useEffect(() => {
+    function handleLojaPesquisadaChange() {
+      if (window.lojaPesquisada && window.lojaPesquisada.nome) {
+        form.setValue("loja_pesquisada", window.lojaPesquisada.nome);
+      } else {
+        form.setValue("loja_pesquisada", "");
+      }
+    }
+    window.addEventListener("lojaPesquisadaChange", handleLojaPesquisadaChange);
+    return () => {
+      window.removeEventListener(
+        "lojaPesquisadaChange",
+        handleLojaPesquisadaChange
+      );
+    };
+  }, [form]);
+
   // Adiciona manipulação dinâmica dos itens do pedido
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -189,14 +233,33 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
             quantidade: selectedPlan.quantity,
           },
         ],
-        loja_pesquisada: data.loja_pesquisada,
+        loja_pesquisada: window.lojaPesquisada,
       };
       const pedidoRes = await fetch("/api/appmax/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedidoPayload),
       });
-      if (!pedidoRes.ok) throw new Error("Erro ao criar pedido");
+      if (!pedidoRes.ok) {
+        const errorData = await pedidoRes.json();
+        if (errorData?.error?.includes("Selecione uma loja")) {
+          toast({
+            title: "Selecione uma loja!",
+            description:
+              "Você precisa escolher uma loja antes de finalizar o pedido.",
+            variant: "destructive",
+          });
+          const searchSection = document.getElementById("search-section");
+          if (searchSection) {
+            searchSection.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
+          }
+          return;
+        }
+        throw new Error(errorData?.error || "Erro ao criar pedido");
+      }
       const pedidoResult = await pedidoRes.json();
       if (!pedidoResult.checkout_url)
         throw new Error("Link de checkout não retornado");
@@ -286,6 +349,52 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
               </SelectContent>
             </Select>
           </div>
+        </div>
+        {/* Campo visual para loja pesquisada */}
+        <div className="mb-8 flex flex-col items-center">
+          <label
+            htmlFor="loja-pesquisada"
+            className="block mb-2 font-semibold text-slenocard-orange text-lg"
+          >
+            Loja pesquisada
+          </label>
+          <input
+            id="loja-pesquisada"
+            type="text"
+            value={form.watch("loja_pesquisada")}
+            readOnly
+            className={`w-full md:w-2/3 lg:w-1/2 px-6 py-4 rounded-lg border text-white bg-slenocard-gray placeholder-gray-400 focus:outline-none transition-colors duration-200 ${
+              form.formState.errors.loja_pesquisada
+                ? "border-red-500"
+                : "border-gray-600"
+            }`}
+            placeholder="Selecione a loja no campo acima"
+            onFocus={() => {
+              const searchSection = document.getElementById("search-section");
+              if (searchSection) {
+                searchSection.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              }
+            }}
+          />
+          {/* Fallback: se o campo estiver vazio mas window.lojaPesquisada existir, atualiza o campo */}
+          {form.watch("loja_pesquisada") === "" &&
+            window.lojaPesquisada?.nome && (
+              <span className="text-yellow-400 text-sm mt-2">
+                Sincronizando loja selecionada...
+                {(() => {
+                  form.setValue("loja_pesquisada", window.lojaPesquisada.nome);
+                  return null;
+                })()}
+              </span>
+            )}
+          {form.formState.errors.loja_pesquisada && (
+            <span className="text-red-500 text-sm mt-2">
+              {form.formState.errors.loja_pesquisada.message}
+            </span>
+          )}
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
