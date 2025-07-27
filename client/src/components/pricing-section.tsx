@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Check, Minus, Plus } from "lucide-react";
 import { useRef } from "react";
 
-export default function PricingSection({ onSelectPlan }: { onSelectPlan?: (plan: PlanOption) => void }) {
+export default function PricingSection({
+  onSelectPlan,
+}: {
+  onSelectPlan?: (plan: PlanOption) => void;
+}) {
   const [additionalCards, setAdditionalCards] = useState(0);
   const additionalCardPrice = 49.9;
 
@@ -53,7 +57,7 @@ export default function PricingSection({ onSelectPlan }: { onSelectPlan?: (plan:
   const formSectionRef = useRef<HTMLElement | null>(null);
 
   // Função para scrollar até o formulário e setar o plano
-  const handleChoosePlan = (plan: typeof plans[0]) => {
+  const handleChoosePlan = (plan: (typeof plans)[0]) => {
     if (onSelectPlan) onSelectPlan(plan);
     const formSection = document.getElementById("pedido");
     if (formSection) {

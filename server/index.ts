@@ -3,6 +3,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import express, { type Request, Response, NextFunction } from "express";
+import bodyParser from "body-parser";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import os from "os";

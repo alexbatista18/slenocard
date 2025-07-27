@@ -1,1 +1,228 @@
-[]
+[
+  {
+    "id": 1753655102704,
+    "customer_id": 111765206,
+    "order_id": 93546278,
+    "status": "estornado",
+    "created_at": "2025-07-27T22:25:02.704Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Ap 302 bl 5",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": {
+        "nome": "Duka Sushi Bar | Burger",
+        "endereco": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "geometry": {
+          "location": {
+            "lat": -5.8592749,
+            "lng": -35.1949715
+          },
+          "viewport": {
+            "northeast": {
+              "lat": -5.857792970107278,
+              "lng": -35.19351692010729
+            },
+            "southwest": {
+              "lat": -5.860492629892722,
+              "lng": -35.19621657989273
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet",
+        "name": "Duka Sushi Bar | Burger",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2048,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/114124388206863125214\">Duka Sushi Bar | Burger</a>"
+            ],
+            "photo_reference": "ATKogpfFSvivf0vVcH6zuZxMVo-hDNH6IRzlA7kwrYyEWO9Rk1KQydTII9DmQecoL07_0xIbgxxSUD4su8kL_xKUSGPw8d5Pvjfr-1fS_P4iTMuSYjTeLH5b7FK9YrTMCA28pUk_7fQCYCRPwrLk06PfqgkGW5v_t4WYTDSgjLlkWa3zQG1na37rknGij0mYrKBF552UOW3LuTGtKcHLd0VhDhzKYYUNIcLcvu2xETZQaT6tXUs6i45tTT0Pj1Z20AzGvjJ2wgZtP5UYEce7SVIDHCSUWayezUwYWPtzu4qPJDmrm0U-rsE",
+            "width": 3072
+          }
+        ],
+        "place_id": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "plus_code": {
+          "compound_code": "4RR4+72 Capim Macio, Natal - State of Rio Grande do Norte",
+          "global_code": "69664RR4+72"
+        },
+        "rating": 4.6,
+        "reference": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "types": [
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 568
+      }
+    },
+    "updated_at": "2025-07-27T23:29:53.008Z"
+  },
+  {
+    "id": 1753659451020,
+    "customer_id": 111765206,
+    "order_id": null,
+    "status": "iniciado",
+    "created_at": "2025-07-27T23:37:31.020Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Ap 302 bl 5",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": {
+        "nome": "Duka Sushi Bar | Burger",
+        "endereco": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "geometry": {
+          "location": {
+            "lat": -5.8592749,
+            "lng": -35.1949715
+          },
+          "viewport": {
+            "northeast": {
+              "lat": -5.857792970107278,
+              "lng": -35.19351692010729
+            },
+            "southwest": {
+              "lat": -5.860492629892722,
+              "lng": -35.19621657989273
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet",
+        "name": "Duka Sushi Bar | Burger",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2048,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/114124388206863125214\">Duka Sushi Bar | Burger</a>"
+            ],
+            "photo_reference": "ATKogpdjZv9HIavbE-d3QMj01vq8_ciGGetF2ATZkluiUr5orEKV0teXNL2VeFyKBiiRq6Y8fib3h6PBJVRTFh29JCtfmlAesiwrBdycQm_IYOok0QcCevAed2Cj7hQEEywa_vU2IGPEPNTdyI5RxNIG_pKJsFdw1xdgsKPVZX1hOJRthck9WlM_EWr7EtwCiSml4cWZdVEhMUlK2EEMCboKj8L3jEuFF1Om1_pSTuq-OIZUpcHy6ASCRiw4mzGcEwymUIx5HMqiv4hJ3nUM96A_QFPnEORVnlUlH72qAtZEV9OJD7pW6Hw",
+            "width": 3072
+          }
+        ],
+        "place_id": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "plus_code": {
+          "compound_code": "4RR4+72 Capim Macio, Natal - State of Rio Grande do Norte",
+          "global_code": "69664RR4+72"
+        },
+        "rating": 4.6,
+        "reference": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "types": [
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 568
+      }
+    }
+  },
+  {
+    "id": 1753659482406,
+    "customer_id": 111765206,
+    "order_id": null,
+    "status": "iniciado",
+    "created_at": "2025-07-27T23:38:02.406Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Ap 302 bl 5",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": {
+        "nome": "Duka Sushi Bar | Burger",
+        "endereco": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "business_status": "OPERATIONAL",
+        "formatted_address": "Av. Engenheiro Roberto Freire, 1608a - Capim Macio, Natal - RN, 59078-600, Brazil",
+        "geometry": {
+          "location": {
+            "lat": -5.8592749,
+            "lng": -35.1949715
+          },
+          "viewport": {
+            "northeast": {
+              "lat": -5.857792970107278,
+              "lng": -35.19351692010729
+            },
+            "southwest": {
+              "lat": -5.860492629892722,
+              "lng": -35.19621657989273
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/restaurant-71.png",
+        "icon_background_color": "#FF9E67",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/restaurant_pinlet",
+        "name": "Duka Sushi Bar | Burger",
+        "opening_hours": {
+          "open_now": true
+        },
+        "photos": [
+          {
+            "height": 2048,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/114124388206863125214\">Duka Sushi Bar | Burger</a>"
+            ],
+            "photo_reference": "ATKogpcji9FebZPpsZpynEndrTxpT7Q-BeaxzHejXz3pM8B2V40_hHwGLLEnMFETBsIkRb-1-lyu2E13qKkgRZBjxTMqVxDl1twiw0ZZ4a7COeB8EMtu0_Itb7HbdDGvQzq5EsJ_JnVMKMUE46tBSMEGRliMPXx-SxuV0Kp0mK4lBasqo7GJk3IDDfi7ySEgi_OFBiA8tUCseoy6_OToGb1-Y0VhhzcM6dqmTcDPqLND_lJqHEYPNHCvc1cL_gwgN34nagkTCKKp2lNDg4k3QYunPtUZ5Rmg5W-hUWOq280LOf2gX-wXd0A",
+            "width": 3072
+          }
+        ],
+        "place_id": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "plus_code": {
+          "compound_code": "4RR4+72 Capim Macio, Natal - State of Rio Grande do Norte",
+          "global_code": "69664RR4+72"
+        },
+        "rating": 4.6,
+        "reference": "ChIJu-REo97_sgcRR197ahFKNn0",
+        "types": [
+          "restaurant",
+          "food",
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 568
+      }
+    }
+  }
+]

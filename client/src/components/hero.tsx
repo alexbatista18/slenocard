@@ -30,7 +30,7 @@ export default function Hero() {
           </div>
           <div className="flex justify-center lg:justify-end">
             {/* Product Mockup */}
-            <div className="flex items-center justify-center min-h-screen pr-24 relative">
+            <div className="flex items-center justify-center lg:pr-24 relative">
               <div className="w-80 h-48 bg-gradient-to-br from-gray-900 to-black rounded-2xl shadow-2xl transform rotate-12 hover:rotate-6 transition-transform duration-300">
                 <div className="absolute inset-4 flex flex-col justify-center items-center">
                   {/* Google logo representation */}

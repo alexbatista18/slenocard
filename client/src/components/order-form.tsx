@@ -113,6 +113,7 @@ const PLAN_OPTIONS: PlanOption[] = [
 ];
 
 const OrderForm = forwardRef(function OrderForm(_, ref) {
+  const [showLojaError, setShowLojaError] = useState(false);
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanOption>(PLAN_OPTIONS[0]);
@@ -243,18 +244,19 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
       if (!pedidoRes.ok) {
         const errorData = await pedidoRes.json();
         if (errorData?.error?.includes("Selecione uma loja")) {
+          setShowLojaError(true);
           toast({
             title: "Selecione uma loja!",
             description:
               "Você precisa escolher uma loja antes de finalizar o pedido.",
             variant: "destructive",
           });
-          const searchSection = document.getElementById("search-section");
-          if (searchSection) {
-            searchSection.scrollIntoView({
-              behavior: "smooth",
-              block: "center",
-            });
+          // Autoscroll para o campo de loja pesquisada
+          const lojaField = document.getElementById("loja-pesquisada");
+          if (lojaField) {
+            lojaField.scrollIntoView({ behavior: "smooth", block: "center" });
+            // Simula clique para abrir o dropdown de busca de loja
+            lojaField.click();
           }
           return;
         }
@@ -364,7 +366,7 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
             value={form.watch("loja_pesquisada")}
             readOnly
             className={`w-full md:w-2/3 lg:w-1/2 px-6 py-4 rounded-lg border text-white bg-slenocard-gray placeholder-gray-400 focus:outline-none transition-colors duration-200 ${
-              form.formState.errors.loja_pesquisada
+              form.formState.errors.loja_pesquisada || showLojaError
                 ? "border-red-500"
                 : "border-gray-600"
             }`}
@@ -379,6 +381,12 @@ const OrderForm = forwardRef(function OrderForm(_, ref) {
               }
             }}
           />
+          {/* Mensagem de erro fixa se loja não selecionada */}
+          {showLojaError && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mt-2 text-center">
+              Você precisa selecionar uma loja antes de finalizar o pedido.
+            </div>
+          )}
           {/* Fallback: se o campo estiver vazio mas window.lojaPesquisada existir, atualiza o campo */}
           {form.watch("loja_pesquisada") === "" &&
             window.lojaPesquisada?.nome && (

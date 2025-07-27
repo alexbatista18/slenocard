@@ -2,7 +2,11 @@
 import express from "express";
 // Importa o axios para fazer requisições HTTP externas (API Appmax)
 import axios from "axios";
-import { saveTransaction, TransactionRecord } from "./db";
+import {
+  saveTransaction,
+  TransactionRecord,
+  updateTransactionStatus,
+} from "./db";
 
 // Cria um roteador do Express para agrupar as rotas relacionadas à Appmax
 const router = express.Router();
@@ -106,49 +110,9 @@ router.post("/appmax/customer", async (req, res) => {
  */
 router.post("/appmax/order", async (req, res) => {
   try {
-    // Produtos fixos do pricing-section
-    const PRODUCT_CATALOG = [
-      {
-        sku: "CARD1",
-        name: "Starter",
-        price: 49.9,
-        quantity: 1,
-      },
-      {
-        sku: "CARD3",
-        name: "Negócio",
-        price: 119.9,
-        quantity: 3,
-      },
-      {
-        sku: "CARD10",
-        name: "Empresa",
-        price: 299.9,
-        quantity: 10,
-      },
-    ];
+    const { customer_id, produtos, loja_pesquisada } = req.body;
 
-    // Recebe do frontend: dados do cliente OU apenas customer_id e produtos
-    const {
-      customer_id,
-      nome,
-      email,
-      telefone,
-      endereco_rua,
-      endereco_numero,
-      endereco_complemento,
-      endereco_bairro,
-      endereco_cidade,
-      endereco_estado,
-      endereco_cep,
-      loja_pesquisada,
-      produtos,
-      shipping = 0.0,
-      discount = 10,
-      freight_type = "PAC",
-    } = req.body;
-
-    // Verifica se loja_pesquisada foi informada e é objeto válido
+    // 1. Validação inicial
     if (
       !loja_pesquisada ||
       typeof loja_pesquisada !== "object" ||
@@ -158,96 +122,50 @@ router.post("/appmax/order", async (req, res) => {
         .status(400)
         .json({ error: "Selecione uma loja antes de finalizar o pedido." });
     }
-
-    let customer;
-    // Se veio customer_id, busca o cliente na Appmax
-    if (customer_id) {
-      const customerRes = await axios.get(
-        `${APPMAX_API_URL}/customer/${customer_id}`,
-        {
-          params: { "access-token": APPMAX_ACCESS_TOKEN },
-        }
-      );
-      customer = customerRes.data.data;
-    } else {
-      // 1. Cria cliente na Appmax
-      const customerPayload = {
-        "access-token": APPMAX_ACCESS_TOKEN,
-        firstname: nome?.split(" ")[0] || "",
-        lastname: nome?.split(" ").slice(1).join(" ") || "",
-        email,
-        telephone: telefone,
-        postcode: endereco_cep,
-        address_street: endereco_rua,
-        address_street_number: endereco_numero,
-        address_street_complement: endereco_complemento,
-        address_street_district: endereco_bairro,
-        address_city: endereco_cidade,
-        address_state: endereco_estado,
-      };
-      const customerRes = await axios.post(
-        `${APPMAX_API_URL}/customer`,
-        customerPayload
-      );
-      customer = customerRes.data.data;
+    if (!customer_id) {
+      return res
+        .status(400)
+        .json({ error: "O ID do cliente (customer_id) é obrigatório." });
     }
 
-    // 2. Monta products conforme catálogo e quantidade enviada
-    let products: { sku: string; name: string; qty: number; price: number }[] =
-      [];
-    let orderTotal = 0;
-    if (Array.isArray(produtos)) {
-      products = produtos.map((p: any) => {
-        const catalog = PRODUCT_CATALOG.find((c) => c.sku === p.sku);
-        if (!catalog) throw new Error(`Produto SKU inválido: ${p.sku}`);
-        const qty = p.quantidade || catalog.quantity;
-        const price = catalog.price;
-        orderTotal += price * qty;
-        return {
-          sku: catalog.sku,
-          name: catalog.name,
-          qty,
-          price,
-        };
-      });
-    }
-    const finalTotal = orderTotal + shipping - discount;
-
-    // 3. Cria pedido na Appmax
-    const orderPayload = {
-      "access-token": APPMAX_ACCESS_TOKEN,
-      customer_id: customer.id,
-      products,
-      shipping,
-      discount,
-      freight_type,
-      total: finalTotal,
-    };
-    const orderRes = await axios.post(`${APPMAX_API_URL}/order`, orderPayload);
-    // Log completo da resposta do pedido para debug
-    console.log(
-      "[DEBUG] Resposta completa do pedido Appmax:",
-      JSON.stringify(orderRes.data, null, 2)
+    // 2. Busca os dados do cliente na Appmax para pegar o HASH
+    const customerRes = await axios.get(
+      `${APPMAX_API_URL}/customer/${customer_id}`,
+      { params: { "access-token": APPMAX_ACCESS_TOKEN } }
     );
+    const customer = customerRes.data.data;
+    const customerHash = customer.hash;
 
-    const order = orderRes.data.data;
+    if (!customerHash) {
+      throw new Error("Não foi possível obter o hash do cliente da Appmax.");
+    }
 
-    // 4. Salva transação como pendente
-    // Filtra campos essenciais da loja pesquisada
-    const lojaFiltrada =
-      loja_pesquisada && typeof loja_pesquisada === "object"
-        ? {
-            nome: loja_pesquisada.nome,
-            endereco: loja_pesquisada.endereco,
-            geometry: loja_pesquisada.geometry,
-          }
-        : undefined;
+    // 3. Define o ID do Bundle (Oferta) do produto
+    const skuSelecionado = produtos[0]?.sku || "CARD1";
+    // Mapeamento dos SKUs para IDs dos bundles conforme imagem
+    const bundleMap: Record<string, { id: number; nome: string }> = {
+      CARD1: { id: 27838021, nome: "Cartão de Avaliação SlenoCard" },
+      CARD3: { id: 27846752, nome: "3 Cartões de Avaliação SlenoCard" },
+      CARD10: { id: 27846764, nome: "10 Cartões de Avaliação SlenoCard" },
+    };
+    const bundleInfo = bundleMap[skuSelecionado];
+    if (!bundleInfo) {
+      throw new Error(
+        `SKU inválido ou Bundle ID não configurado: ${skuSelecionado}`
+      );
+    }
+    const bundleId = bundleInfo.id;
+    // bundleInfo.nome pode ser usado para logs ou registro
 
+    // 4. Monta a URL de checkout manualmente
+    const checkout_url = `https://slenocard1753621598844.carrinho.app/one-checkout/ocmtb/${bundleId}?customer=${customerHash}`;
+
+    // 5. Salva um registro local PROVISÓRIO com order_id NULO
     const record: TransactionRecord = {
       id: Date.now(),
       customer_id: customer.id,
-      order_id: order.id,
-      status: "pendente",
+      order_id: null, // Ainda não temos o ID do pedido oficial
+      status: "iniciado", // Um status inicial para indicar que o checkout foi gerado
       created_at: new Date().toISOString(),
       user: {
         firstname: customer.firstname,
@@ -263,55 +181,26 @@ router.post("/appmax/order", async (req, res) => {
           state: customer.address_state,
           postcode: customer.postcode,
         },
-        loja_pesquisada: lojaFiltrada,
+        loja_pesquisada: loja_pesquisada, // Salvando a informação crucial
       },
     };
     saveTransaction(record);
 
-    // 5. Retorna link de checkout para o frontend
-    // Tenta buscar o link de checkout do local correto na resposta do pedido
-    let checkout_url = "";
-    // Tenta buscar no interested_bundle (objeto ou array)
-    if (order && order.customer && order.customer.interested_bundle) {
-      if (
-        Array.isArray(order.customer.interested_bundle) &&
-        order.customer.interested_bundle.length > 0
-      ) {
-        if (order.customer.interested_bundle[0].link_to_checkout) {
-          checkout_url = order.customer.interested_bundle[0].link_to_checkout;
-        }
-      } else if (order.customer.interested_bundle.link_to_checkout) {
-        checkout_url = order.customer.interested_bundle.link_to_checkout;
-      }
-    }
-    // Se não achou, tenta buscar no bundles
-    if (
-      !checkout_url &&
-      order &&
-      order.bundles &&
-      Array.isArray(order.bundles)
-    ) {
-      for (const bundle of order.bundles) {
-        if (bundle.link_to_checkout) {
-          checkout_url = bundle.link_to_checkout;
-          break;
-        }
-      }
-    }
-    if (!checkout_url) {
-      console.warn(
-        "[ALERTA] Link de checkout não encontrado na resposta do pedido. Verifique configuração do produto/bundle na Appmax."
-      );
-    }
+    console.log(
+      `[CHECKOUT] Link gerado para o cliente ${customer.id}: ${checkout_url}`
+    );
+
+    // 6. Retorna a URL para o frontend redirecionar o cliente
     res.json({
       success: true,
-      text: "OK",
       checkout_url,
-      order_id: order.id,
       customer_id: customer.id,
-      debug_order: order, // Inclui toda a resposta para debug no frontend se quiser
     });
   } catch (error: any) {
+    console.error(
+      "[ERRO EM /api/appmax/order]",
+      error?.response?.data || error.message
+    );
     res.status(400).json({ error: error?.response?.data || error.message });
   }
 });
@@ -401,59 +290,128 @@ router.post("/appmax/payment/boleto", async (req, res) => {
  * Endpoint para receber webhooks da Appmax.
  * Cadastre esta rota no painel Appmax para receber notificações de eventos.
  */
+import { updateTransactionByEmail } from "./db";
+
 router.post("/appmax/webhook", (req, res) => {
-  // Trate os dados recebidos do webhook conforme sua lógica de negócio
-  console.log("Webhook recebido:", JSON.stringify(req.body, null, 2));
-  // Suporta payloads Appmax: plano A (flat), plano B (data: {...})
-  const { order_id, order_status, payment_status, data } = req.body;
-  let realOrderId = order_id;
-  let status: "concluido" | "pendente" | "falha" = "pendente";
-  // Se vier data, prioriza dados internos
-  if (data) {
-    if (data.status && typeof data.status === "string") {
-      if (data.status.toLowerCase() === "aprovado") {
-        status = "concluido";
-      } else if (data.status.toLowerCase().includes("falha")) {
-        status = "falha";
+  console.log(`\n[WEBHOOK] Rota acessada em: ${new Date().toISOString()}`);
+
+  try {
+    const { data, event } = req.body;
+
+    // 1. Extrai as informações essenciais do webhook
+    const realOrderId = data?.id;
+    const customerEmail = data?.customer?.email;
+    const eventStatus = data?.status?.toLowerCase();
+
+    if (!realOrderId || !customerEmail) {
+      console.warn(
+        "[WEBHOOK] Payload recebido sem order_id ou e-mail do cliente. Ignorando."
+      );
+      return res.sendStatus(200);
+    }
+
+    // Ignora o evento 'OrderIntegrated'
+    if (event === "OrderIntegrated" || event === "OrderAuthorizedWithDelay") {
+      console.log(`[WEBHOOK] Evento 'OrderIntegrated' ignorado.`);
+      return res.sendStatus(200);
+    }
+
+    // 2. Determina o status final da transação
+    let finalStatus:
+      | "concluido"
+      | "pendente"
+      | "falha"
+      | "pix_pendente"
+      | "estornado" = "pendente";
+
+    if (
+      event === "OrderPaid" ||
+      eventStatus === "aprovado" ||
+      eventStatus === "pago"
+    ) {
+      finalStatus = "concluido";
+    } else if (event === "OrderPixCreated") {
+      finalStatus = "pix_pendente";
+    } else if (event === "OrderRefund") {
+      finalStatus = "estornado";
+    } else if (
+      eventStatus?.includes("falha") ||
+      eventStatus?.includes("recusado")
+    ) {
+      finalStatus = "falha";
+    }
+
+    console.log(
+      `[WEBHOOK] Evento: ${event} | Order ID: ${realOrderId} | Status: ${finalStatus} | Email: ${customerEmail}`
+    );
+
+    // 3. Atualiza a transação local usando o E-MAIL como chave de busca
+    const updatedById = updateTransactionStatus(realOrderId, finalStatus);
+
+    if (updatedById) {
+      console.log(
+        `[SUCESSO] Status da transação ${realOrderId} atualizado para '${finalStatus}'.`
+      );
+    } else {
+      // 2. Se não encontrou por ID, assume que é o primeiro webhook e tenta vincular pelo e-mail.
+      console.log(
+        `[INFO] Não encontrou transação pelo ID ${realOrderId}. Tentando vincular pelo e-mail ${customerEmail}...`
+      );
+      const updatedByEmail = updateTransactionByEmail(customerEmail, {
+        order_id: realOrderId,
+        status: finalStatus,
+      });
+
+      if (updatedByEmail) {
+        console.log(
+          `[SUCESSO] Transação do cliente ${customerEmail} VINCULADA ao Order ID ${realOrderId} com status '${finalStatus}'.`
+        );
+      } else {
+        console.warn(
+          `[ALERTA] Nenhum registro encontrado para o Order ID ${realOrderId} ou para o e-mail pendente ${customerEmail}.`
+        );
       }
     }
-    if (data.id) realOrderId = data.id;
+  } catch (error) {
+    console.error("[ERRO NO WEBHOOK]", error);
   }
-  // Fallback para order_status/payment_status
-  if (order_status && typeof order_status === "string") {
-    if (
-      order_status.toLowerCase().includes("concluido") ||
-      order_status.toLowerCase().includes("pago")
-    ) {
-      status = "concluido";
-    } else if (order_status.toLowerCase().includes("falha")) {
-      status = "falha";
-    }
-  }
-  if (payment_status && typeof payment_status === "string") {
-    if (
-      payment_status.toLowerCase().includes("concluido") ||
-      payment_status.toLowerCase().includes("pago")
-    ) {
-      status = "concluido";
-    } else if (payment_status.toLowerCase().includes("falha")) {
-      status = "falha";
-    }
-  }
-  if (realOrderId) {
-    const {
-      updateTransactionStatus,
-      getTransactionByOrderId,
-    } = require("./db");
-    updateTransactionStatus(realOrderId, status);
-    // Busca transação para mostrar loja_pesquisada
-    const transaction = getTransactionByOrderId(realOrderId);
-    const loja = transaction?.user?.loja_pesquisada || "(não informado)";
-    console.log(
-      `Transação ${realOrderId} atualizada para status: ${status} | Loja pesquisada: ${loja}`
-    );
-  }
+
   res.sendStatus(200);
+});
+/**
+ * Rota para buscar o link de checkout de um pedido Appmax
+ * Se não existir, gera manualmente usando bundles.id e customer.hash
+ * GET /appmax/order/:orderId/checkout-link
+ */
+router.get("/appmax/order/:orderId/checkout-link", async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const response = await axios.get(`${APPMAX_API_URL}/order/${orderId}`, {
+      params: { "access-token": APPMAX_ACCESS_TOKEN },
+    });
+    const order = response.data?.data;
+    let checkout_url = "";
+    // Tenta buscar o link de checkout padrão
+    if (order && order.bundles && Array.isArray(order.bundles)) {
+      for (const bundle of order.bundles) {
+        if (bundle.link_to_checkout) {
+          checkout_url = bundle.link_to_checkout;
+          break;
+        }
+      }
+      // Se não achou, gera manualmente
+      if (!checkout_url && order.customer && order.customer.hash) {
+        const bundleId = order.bundles[0]?.id;
+        const hash = order.customer.hash;
+        if (bundleId && hash) {
+          checkout_url = `https://slenocard1753621598844.carrinho.app/one-checkout/ocmtb/${bundleId}?customer=${hash}`;
+        }
+      }
+    }
+    res.json({ checkout_url });
+  } catch (error: any) {
+    res.status(400).json({ error: error?.response?.data || error.message });
+  }
 });
 
 // Exporta o roteador para ser usado no arquivo de rotas principal do backend
