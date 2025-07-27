@@ -1,0 +1,138 @@
+[
+  {
+    "id": 1753632216018,
+    "customer_id": 111764505,
+    "order_id": 93525239,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:03:36.018Z",
+    "user": {
+      "firstname": "teste",
+      "lastname": "teste",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Casa amarela dos fundos",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": ""
+    }
+  },
+  {
+    "id": 1753632730076,
+    "customer_id": 111765206,
+    "order_id": 93525753,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:12:10.076Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Casa amarela dos fundos",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": ""
+    }
+  },
+  {
+    "id": 1753633103757,
+    "customer_id": 111765206,
+    "order_id": 93526146,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:18:23.757Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Casa amarela dos fundos",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": ""
+    }
+  },
+  {
+    "id": 1753633282929,
+    "customer_id": 111761901,
+    "order_id": 93526314,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:21:22.929Z",
+    "user": {
+      "firstname": "João",
+      "lastname": "da Silva Teste",
+      "email": "joao.teste@email.com",
+      "telephone": "11987654321",
+      "address": {
+        "street": "Rua das Flores",
+        "number": "123",
+        "complement": "Apto 45",
+        "district": "Jardim das Rosas",
+        "city": "São Paulo",
+        "state": "SP",
+        "postcode": "01234567"
+      }
+    }
+  },
+  {
+    "id": 1753633305417,
+    "customer_id": 111765206,
+    "order_id": 93526341,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:21:45.417Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Casa amarela dos fundos",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      }
+    }
+  },
+  {
+    "id": 1753634753351,
+    "customer_id": 111761901,
+    "order_id": 93527676,
+    "status": "pendente",
+    "created_at": "2025-07-27T16:45:53.351Z",
+    "user": {
+      "firstname": "João",
+      "lastname": "da Silva Teste",
+      "email": "joao.teste@email.com",
+      "telephone": "11987654321",
+      "address": {
+        "street": "Rua das Flores",
+        "number": "123",
+        "complement": "Apto 45",
+        "district": "Jardim das Rosas",
+        "city": "São Paulo",
+        "state": "SP",
+        "postcode": "01234567"
+      },
+      "loja_pesquisada": ""
+    }
+  }
+]

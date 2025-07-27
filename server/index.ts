@@ -2,24 +2,20 @@
 
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
+import express, { type Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
+import os from "os";
 
 // --- CORREÇÃO PARA O ERRO "__dirname is not defined" ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 
 console.log(`API Key Loaded: ${process.env.GOOGLE_API_KEY ? "Yes" : "No"}`);
 
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }
-
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-import os from "os";
 
 const app = express();
 app.use(express.json());

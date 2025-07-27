@@ -9,6 +9,7 @@ type PlaceResult = {
 
 export default function SearchSection() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState<string>("");
   const [results, setResults] = useState<PlaceResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -80,6 +81,7 @@ export default function SearchSection() {
 
   const handleSelect = (name: string) => {
     setSearchTerm(name);
+    setSelectedPlace(name);
     setShowDropdown(false);
   };
 
@@ -99,6 +101,12 @@ export default function SearchSection() {
               onFocus={() => results.length > 0 && setShowDropdown(true)}
               className="w-full px-6 py-4 rounded-lg bg-slenocard-gray border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:border-slenocard-orange transition-colors duration-200"
             />
+            {/* Expor loja pesquisada para o OrderForm via window/global (simples) */}
+            {selectedPlace && (
+              <script>
+                {`window.lojaPesquisada = ${JSON.stringify(selectedPlace)};`}
+              </script>
+            )}
             {showDropdown && results.length > 0 && (
               <ul
                 className="absolute z-10 mt-1 w-full rounded-lg shadow-lg text-left max-h-60 overflow-y-auto 
