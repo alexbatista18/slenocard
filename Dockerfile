@@ -16,6 +16,9 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Install cross-env globally for production
+RUN npm install -g cross-env
+
 # Remove dev dependencies to reduce image size
 RUN npm prune --production
 
