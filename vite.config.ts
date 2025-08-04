@@ -4,7 +4,10 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/slenocard/", // Caminho do repositório para GitHub Pages
+  base:
+    process.env.NODE_ENV === "production" && process.env.GITHUB_PAGES
+      ? "/slenocard/"
+      : "/",
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -16,6 +19,17 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    // Otimizações para produção
+    minify: "esbuild",
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          ui: ["lucide-react"],
+        },
+      },
+    },
   },
   server: {
     fs: {
