@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  # Serviço do Backend (API)
+  slenocard-backend:
+    image: dkalexbatista/slenocard-backend:latest
+    restart: always
+    environment:
+      - NODE_ENV=production
+      # Adicione suas variáveis de ambiente aqui
+      # - GOOGLE_API_KEY=sua_chave_aqui
+      # - DATABASE_URL=sua_url_database_aqui
+    networks:
+      - proxy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # Domínio da API - SUBSTITUA pelo seu domínio
+        - "traefik.http.routers.slenocard-api.rule=Host(`api.slenocard.com.br`)"
+        - "traefik.http.routers.slenocard-api.entrypoints=websecure"
+        - "traefik.http.routers.slenocard-api.tls.certresolver=myresolver"
+        - "traefik.http.services.slenocard-api.loadbalancer.server.port=3000"
+
+        # Middleware para CORS se necessário
+        - "traefik.http.middlewares.slenocard-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH"
+        - "traefik.http.middlewares.slenocard-cors.headers.accesscontrolalloworigin=*"
+        - "traefik.http.middlewares.slenocard-cors.headers.accesscontrolmaxage=100"
+        - "traefik.http.middlewares.slenocard-cors.headers.addvaryheader=true"
+
+        # Aplicar middleware à rota da API
+        - "traefik.http.routers.slenocard-api.middlewares=slenocard-cors@docker"
+
+  # Serviço do Frontend (Site React)
+  slenocard-frontend:
+    image: dkalexbatista/slenocard-frontend:latest
+    restart: always
+    networks:
+      - proxy
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        # Domínio do Site Principal - SUBSTITUA pelo seu domínio
+        - "traefik.http.routers.slenocard-site.rule=Host(`www.slenocard.com.br`) || Host(`slenocard.com.br`)"
+        - "traefik.http.routers.slenocard-site.entrypoints=websecure"
+        - "traefik.http.routers.slenocard-site.tls.certresolver=myresolver"
+        - "traefik.http.services.slenocard-site.loadbalancer.server.port=80"
+
+        # Redirecionamento de domínio sem www para com www (opcional)
+        - "traefik.http.middlewares.slenocard-redirect.redirectregex.regex=^https://slenocard.com.br/(.*)"
+        - "traefik.http.middlewares.slenocard-redirect.redirectregex.replacement=https://www.slenocard.com.br/$${1}"
+        - "traefik.http.routers.slenocard-site.middlewares=slenocard-redirect@docker"
+
+networks:
+  proxy:
+    external: true

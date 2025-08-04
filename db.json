@@ -78,8 +78,8 @@
   {
     "id": 1753659451020,
     "customer_id": 111765206,
-    "order_id": null,
-    "status": "iniciado",
+    "order_id": 93559898,
+    "status": "pix_pendente",
     "created_at": "2025-07-27T23:37:31.020Z",
     "user": {
       "firstname": "Alex",
@@ -148,7 +148,8 @@
         ],
         "user_ratings_total": 568
       }
-    }
+    },
+    "updated_at": "2025-07-28T02:58:09.389Z"
   },
   {
     "id": 1753659482406,
@@ -222,6 +223,79 @@
           "establishment"
         ],
         "user_ratings_total": 568
+      }
+    }
+  },
+  {
+    "id": 1753671448992,
+    "customer_id": 111765206,
+    "order_id": null,
+    "status": "iniciado",
+    "created_at": "2025-07-28T02:57:28.992Z",
+    "user": {
+      "firstname": "Alex",
+      "lastname": "Batista da Costa",
+      "email": "dkalexbatista@gmail.com",
+      "telephone": "69993697356",
+      "address": {
+        "street": "Rua Governador Jorge Teixeira",
+        "number": "3053",
+        "complement": "Ap 302 bl 5",
+        "district": "Nossa Senhora de Fátima",
+        "city": "Ji-Paraná",
+        "state": "RO",
+        "postcode": "76909790"
+      },
+      "loja_pesquisada": {
+        "nome": "Agência RG Produções",
+        "endereco": "R. Alm. Barroso, 1393 - 1º Andar - Bairro Centro, Ji-Paraná - RO, 76900-079, Brazil",
+        "business_status": "OPERATIONAL",
+        "formatted_address": "R. Alm. Barroso, 1393 - 1º Andar - Bairro Centro, Ji-Paraná - RO, 76900-079, Brazil",
+        "geometry": {
+          "location": {
+            "lat": -10.878395,
+            "lng": -61.9491649
+          },
+          "viewport": {
+            "northeast": {
+              "lat": -10.87709567010728,
+              "lng": -61.94773962010728
+            },
+            "southwest": {
+              "lat": -10.87979532989272,
+              "lng": -61.95043927989273
+            }
+          }
+        },
+        "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/generic_business-71.png",
+        "icon_background_color": "#7B9EB0",
+        "icon_mask_base_uri": "https://maps.gstatic.com/mapfiles/place_api/icons/v2/generic_pinlet",
+        "name": "Agência RG Produções",
+        "opening_hours": {
+          "open_now": false
+        },
+        "photos": [
+          {
+            "height": 2250,
+            "html_attributions": [
+              "<a href=\"https://maps.google.com/maps/contrib/101253628611598746627\">Agência RG Produções</a>"
+            ],
+            "photo_reference": "ATKogpc2_SRmeFLAnAq63XG1fkKqkhNSwLkPSaWKnbGZzA01M0q40E9t_wCnqrFpWozdcWpfo9M1ha2bLx_YrYcUsFTLn4-eRD-SgoGgZl20x1w6qVUUN3B8pqLMTmnqP7HPHu38R0RxtkWmNqrmG63MBn6BpUbj4JcxKiMtB7hP91onkMNey1y3iOEyFcXBFOjUv4yRVAl1MhSahNtJgYsiKHzku1OeaUqKd6n27vmOFSqWxSnE8f5VRye_K6bFcFOSPAI7RSKELYqjUwhor1xUavNkSQP9ivhAyc6iFZ8oUX0povN2PQM",
+            "width": 4000
+          }
+        ],
+        "place_id": "ChIJ798k4OSbyZMRKRxk3KU-fhU",
+        "plus_code": {
+          "compound_code": "43C2+J8 Bairro Centro, Ji-Paraná - State of Rondônia",
+          "global_code": "57XW43C2+J8"
+        },
+        "rating": 5,
+        "reference": "ChIJ798k4OSbyZMRKRxk3KU-fhU",
+        "types": [
+          "point_of_interest",
+          "establishment"
+        ],
+        "user_ratings_total": 11
       }
     }
   }
