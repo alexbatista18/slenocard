@@ -50,13 +50,8 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
-      // CORREÇÃO: Usar __dirname ao invés de import.meta.dirname
-      const clientTemplate = path.resolve(
-        __dirname,
-        "..",
-        "client",
-        "index.html"
-      );
+      // CORREÇÃO: Usar path absoluto seguro
+      const clientTemplate = path.join(__dirname, "..", "client", "index.html");
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
@@ -74,39 +69,63 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // CORREÇÃO PRINCIPAL: Caminho correto para produção
-  const distPath = path.resolve(process.cwd(), "dist", "public");
+  // CORREÇÃO CRÍTICA: Múltiplos caminhos para tentar
+  const possiblePaths = [
+    path.join(process.cwd(), "dist", "public"),
+    path.join(__dirname, "..", "dist", "public"),
+    path.join(process.cwd(), "public"),
+    path.join(__dirname, "..", "public"),
+    path.join(process.cwd(), "client", "dist"),
+  ];
 
-  console.log("Debug paths:", {
+  console.log("Debugging production paths:", {
     cwd: process.cwd(),
-    __dirname,
-    distPath,
-    exists: fs.existsSync(distPath),
+    __dirname: __dirname,
+    possiblePaths: possiblePaths,
   });
 
-  if (!fs.existsSync(distPath)) {
-    // Fallback: tentar caminho alternativo
-    const altDistPath = path.resolve(__dirname, "..", "dist", "public");
-    console.log("Trying alternative path:", altDistPath);
+  let distPath: string | null = null;
 
-    if (fs.existsSync(altDistPath)) {
-      console.log("Using alternative path:", altDistPath);
-      app.use(express.static(altDistPath));
-      app.use("*", (_req, res) => {
-        res.sendFile(path.resolve(altDistPath, "index.html"));
-      });
-      return;
-    }
-
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`
+  // Encontrar o primeiro caminho que existe
+  for (const testPath of possiblePaths) {
+    console.log(
+      `Testing path: ${testPath} - exists: ${fs.existsSync(testPath)}`
     );
+    if (fs.existsSync(testPath)) {
+      distPath = testPath;
+      console.log(`✅ Using path: ${distPath}`);
+      break;
+    }
   }
 
+  if (!distPath) {
+    console.error("❌ No valid dist path found! Available files/folders:");
+    try {
+      console.log("Root directory contents:", fs.readdirSync(process.cwd()));
+      console.log("__dirname contents:", fs.readdirSync(__dirname));
+    } catch (e) {
+      console.log("Error listing directories:", e);
+    }
+
+    // FALLBACK EXTREMO: servir arquivos do diretório atual
+    console.log("🚨 Using fallback: serving from current directory");
+    app.use(express.static(process.cwd()));
+    app.use("*", (_req, res) => {
+      res.status(404).send("App not built properly. Check build process.");
+    });
+    return;
+  }
+
+  // Servir arquivos estáticos
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
+  // SPA fallback
   app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    const indexPath = path.join(distPath!, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send("index.html not found");
+    }
   });
 }
