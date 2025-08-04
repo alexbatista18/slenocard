@@ -16,6 +16,12 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Set environment variables for production
+ENV NODE_ENV=production
+ENV SERVER_HOST=0.0.0.0
+ENV FRONTEND_PORT=80
+ENV BACKEND_PORT=5000
+
 # Expose ports
 EXPOSE 80 5000
 

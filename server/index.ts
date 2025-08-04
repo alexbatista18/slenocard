@@ -85,7 +85,7 @@ app.use((req, res, next) => {
     () => {
       const domain = process.env.DOMAIN;
       const localAddress = `http://localhost:${port}`;
-      const networkAddress = `http://${getLocalIP()}:${port}`;
+      const networkAddress = `http://0.0.0.0:${port}`;
 
       log("🚀 Servidor iniciado com sucesso!");
       if (domain) {
