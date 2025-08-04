@@ -5,6 +5,11 @@ import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
+import { fileURLToPath } from "url";
+
+// CORREÇÃO: Definir __dirname manualmente
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const viteLogger = createLogger();
 
@@ -45,18 +50,19 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      // CORREÇÃO: Usar __dirname ao invés de import.meta.dirname
       const clientTemplate = path.resolve(
-        import.meta.dirname,
+        __dirname,
         "..",
         "client",
-        "index.html",
+        "index.html"
       );
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
       template = template.replace(
         `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
+        `src="/src/main.tsx?v=${nanoid()}"`
       );
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
@@ -68,11 +74,32 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // CORREÇÃO PRINCIPAL: Caminho correto para produção
+  const distPath = path.resolve(process.cwd(), "dist", "public");
+
+  console.log("Debug paths:", {
+    cwd: process.cwd(),
+    __dirname,
+    distPath,
+    exists: fs.existsSync(distPath),
+  });
 
   if (!fs.existsSync(distPath)) {
+    // Fallback: tentar caminho alternativo
+    const altDistPath = path.resolve(__dirname, "..", "dist", "public");
+    console.log("Trying alternative path:", altDistPath);
+
+    if (fs.existsSync(altDistPath)) {
+      console.log("Using alternative path:", altDistPath);
+      app.use(express.static(altDistPath));
+      app.use("*", (_req, res) => {
+        res.sendFile(path.resolve(altDistPath, "index.html"));
+      });
+      return;
+    }
+
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Could not find the build directory: ${distPath}, make sure to build the client first`
     );
   }
 
