@@ -72,9 +72,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  const port = process.env.FRONTEND_PORT
-    ? parseInt(process.env.FRONTEND_PORT)
-    : 80;
+  const port = process.env.BACKEND_PORT
+    ? parseInt(process.env.BACKEND_PORT)
+    : 5000;
   const host = process.env.SERVER_HOST || "0.0.0.0";
 
   server.listen(

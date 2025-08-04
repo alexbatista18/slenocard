@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://slenocard.com/sitemap.xml 
+# Sitemap
+Sitemap: https://slenocard.com.br/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1 

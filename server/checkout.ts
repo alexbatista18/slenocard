@@ -2,11 +2,12 @@
 import express from "express";
 // Importa o axios para fazer requisições HTTP externas (API Appmax)
 import axios from "axios";
-import {
-  saveTransaction,
-  TransactionRecord,
-  updateTransactionStatus,
-} from "./db";
+// Removendo dependências do banco de dados para versão local
+// import {
+//   saveTransaction,
+//   TransactionRecord,
+//   updateTransactionStatus,
+// } from "./db";
 
 // Cria um roteador do Express para agrupar as rotas relacionadas à Appmax
 const router = express.Router();
@@ -161,30 +162,38 @@ router.post("/appmax/order", async (req, res) => {
     const checkout_url = `https://slenocard1753621598844.carrinho.app/one-checkout/ocmtb/${bundleId}?customer=${customerHash}`;
 
     // 5. Salva um registro local PROVISÓRIO com order_id NULO
-    const record: TransactionRecord = {
-      id: Date.now(),
-      customer_id: customer.id,
-      order_id: null, // Ainda não temos o ID do pedido oficial
-      status: "iniciado", // Um status inicial para indicar que o checkout foi gerado
-      created_at: new Date().toISOString(),
-      user: {
-        firstname: customer.firstname,
-        lastname: customer.lastname,
-        email: customer.email,
-        telephone: customer.telephone,
-        address: {
-          street: customer.address_street,
-          number: customer.address_street_number,
-          complement: customer.address_street_complement,
-          district: customer.address_street_district,
-          city: customer.address_city,
-          state: customer.address_state,
-          postcode: customer.postcode,
-        },
-        loja_pesquisada: loja_pesquisada, // Salvando a informação crucial
-      },
-    };
-    saveTransaction(record);
+
+    // const record: TransactionRecord = {
+    //   id: Date.now(),
+    //   customer_id: customer.id,
+    //   order_id: null, // Ainda não temos o ID do pedido oficial
+    //   status: "iniciado", // Um status inicial para indicar que o checkout foi gerado
+    //   created_at: new Date().toISOString(),
+    //   user: {
+    //     firstname: customer.firstname,
+    //     lastname: customer.lastname,
+    //     email: customer.email,
+    //     telephone: customer.telephone,
+    //     address: {
+    //       street: customer.address_street,
+    //       number: customer.address_street_number,
+    //       complement: customer.address_street_complement,
+    //       district: customer.address_street_district,
+    //       city: customer.address_city,
+    //       state: customer.address_state,
+    //       postcode: customer.postcode,
+    //     },
+    //     loja_pesquisada: loja_pesquisada, // Salvando a informação crucial
+    //   },
+    // };
+    // saveTransaction(record);
+
+    // 6. Log local para desenvolvimento (sem banco de dados)
+    console.log(
+      `[CHECKOUT] Cliente criado: ${customer.id} - ${customer.firstname} ${customer.lastname}`
+    );
+    console.log(`[CHECKOUT] Loja pesquisada: ${loja_pesquisada?.nome}`);
+    console.log(`[CHECKOUT] Produtos: ${JSON.stringify(produtos)}`);
 
     console.log(
       `[CHECKOUT] Link gerado para o cliente ${customer.id}: ${checkout_url}`
@@ -290,7 +299,8 @@ router.post("/appmax/payment/boleto", async (req, res) => {
  * Endpoint para receber webhooks da Appmax.
  * Cadastre esta rota no painel Appmax para receber notificações de eventos.
  */
-import { updateTransactionByEmail } from "./db";
+// Removendo import do banco de dados para versão local
+// import { updateTransactionByEmail } from "./db";
 
 router.post("/appmax/webhook", (req, res) => {
   console.log(`\n[WEBHOOK] Rota acessada em: ${new Date().toISOString()}`);
@@ -346,32 +356,40 @@ router.post("/appmax/webhook", (req, res) => {
     );
 
     // 3. Atualiza a transação local usando o E-MAIL como chave de busca
-    const updatedById = updateTransactionStatus(realOrderId, finalStatus);
+    // const updatedById = updateTransactionStatus(realOrderId, finalStatus);
 
-    if (updatedById) {
-      console.log(
-        `[SUCESSO] Status da transação ${realOrderId} atualizado para '${finalStatus}'.`
-      );
-    } else {
-      // 2. Se não encontrou por ID, assume que é o primeiro webhook e tenta vincular pelo e-mail.
-      console.log(
-        `[INFO] Não encontrou transação pelo ID ${realOrderId}. Tentando vincular pelo e-mail ${customerEmail}...`
-      );
-      const updatedByEmail = updateTransactionByEmail(customerEmail, {
-        order_id: realOrderId,
-        status: finalStatus,
-      });
+    // if (updatedById) {
+    //   console.log(
+    //     `[SUCESSO] Status da transação ${realOrderId} atualizado para '${finalStatus}'.`
+    //   );
+    // } else {
+    //   // 2. Se não encontrou por ID, assume que é o primeiro webhook e tenta vincular pelo e-mail.
+    //   console.log(
+    //     `[INFO] Não encontrou transação pelo ID ${realOrderId}. Tentando vincular pelo e-mail ${customerEmail}...`
+    //   );
+    //   const updatedByEmail = updateTransactionByEmail(customerEmail, {
+    //     order_id: realOrderId,
+    //     status: finalStatus,
+    //   });
 
-      if (updatedByEmail) {
-        console.log(
-          `[SUCESSO] Transação do cliente ${customerEmail} VINCULADA ao Order ID ${realOrderId} com status '${finalStatus}'.`
-        );
-      } else {
-        console.warn(
-          `[ALERTA] Nenhum registro encontrado para o Order ID ${realOrderId} ou para o e-mail pendente ${customerEmail}.`
-        );
-      }
-    }
+    //   if (updatedByEmail) {
+    //     console.log(
+    //       `[SUCESSO] Transação do cliente ${customerEmail} VINCULADA ao Order ID ${realOrderId} com status '${finalStatus}'.`
+    //     );
+    //   } else {
+    //     console.warn(
+    //       `[ALERTA] Nenhum registro encontrado para o Order ID ${realOrderId} ou para o e-mail pendente ${customerEmail}.`
+    //     );
+    //   }
+    // }
+
+    // 3. Log local para desenvolvimento (sem banco de dados)
+    console.log(
+      `[WEBHOOK] Status da transação ${realOrderId} seria atualizado para '${finalStatus}' (modo desenvolvimento)`
+    );
+    console.log(
+      `[WEBHOOK] Cliente: ${customerEmail} | Evento: ${event} | Status: ${finalStatus}`
+    );
   } catch (error) {
     console.error("[ERRO NO WEBHOOK]", error);
   }
