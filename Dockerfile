@@ -19,8 +19,8 @@ RUN npm run build
 # Install cross-env globally for production
 RUN npm install -g cross-env
 
-# Remove dev dependencies to reduce image size
-RUN npm prune --production
+# Keep vite for production (it's needed by the built application)
+RUN npm install vite
 
 # Set environment variables for production
 ENV NODE_ENV=production
